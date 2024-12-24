@@ -162,3 +162,5 @@ cython_debug/
 #.idea/
 Source/credentials.json
 Source/token.json
+Source/serviceAccountCredentials.json
+runSupervisord.txt
