@@ -17,11 +17,18 @@ class MyServer(BaseHTTPRequestHandler):
             ids.append(lines[0])
     def do_GET(self):
         start = time.time()
-        im = dr.get_image(self.service, self.ids[random.randrange(len(self.ids))])
-        self.send_response(200)
-        self.send_header("Content-type", "image")
-        self.end_headers()
-        self.wfile.write(im.getbuffer())
+        if "favicon" in self.path:
+            with open("icons/favicon.ico", "rb") as icon:
+                self.send_response(200)
+                self.send_header("Content-type", "image")
+                self.end_headers()
+                self.wfile.write(icon.read())
+        else:
+            im = dr.get_image(self.service, self.ids[random.randrange(len(self.ids))])
+            self.send_response(200)
+            self.send_header("Content-type", "image")
+            self.end_headers()
+            self.wfile.write(im.getbuffer())
         end = time.time()
         print(f"Took {end - start}")
 
