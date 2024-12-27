@@ -4,6 +4,7 @@ import time
 import csv
 import driver as dr
 import random
+import json
 
 hostName = "localhost"
 serverPort = 8069
@@ -34,6 +35,10 @@ class MyServer(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
+    with open("server_conf.json", "r") as f:
+        server_json = json.load(f)
+        hostName = server_json["hostname"]
+        serverPort = server_json["port"]
     webServer = HTTPServer((hostName, serverPort), MyServer)
     print("Server started http://%s:%s" % (hostName, serverPort))
 
