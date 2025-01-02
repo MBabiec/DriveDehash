@@ -26,7 +26,7 @@ def build_drive_service():
 def get_next_batch(service, page_token=None):
     results = (
         service.files()
-        .list(pageToken=page_token, pageSize=10, fields="nextPageToken, files(id, name, fileExtension, mimeType)")
+        .list(pageToken=page_token, pageSize=100, fields="nextPageToken, files(id, name, fileExtension, mimeType)")
         .execute()
     )
     items = results.get("files", [])
