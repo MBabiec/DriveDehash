@@ -11,10 +11,29 @@ import io
 
 SCOPES = ["https://www.googleapis.com/auth/drive.metadata.readonly","https://www.googleapis.com/auth/drive.readonly"]
 
-def build_drive_service():
+def build_drive_service(isServiceAccount=True):
     creds = None
-    service_account_json_key = "serviceAccountCredentials.json"
-    creds = service_account.Credentials.from_service_account_file(filename=service_account_json_key, scopes=SCOPES)
+    if isServiceAccount:
+        service_account_json_key = "serviceAccountCredentials.json"
+        creds = service_account.Credentials.from_service_account_file(filename=service_account_json_key, scopes=SCOPES)
+    else:
+        # The file token.json stores the user's access and refresh tokens, and is
+        # created automatically when the authorization flow completes for the first
+        # time.
+        if os.path.exists("token.json"):
+            creds = Credentials.from_authorized_user_file("token.json", SCOPES)
+        # If there are no (valid) credentials available, let the user log in.
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(
+                    "credentials.json", SCOPES
+                )
+                creds = flow.run_local_server(port=0)
+        # Save the credentials for the next run
+        with open("token.json", "w") as token:
+            token.write(creds.to_json())
 
     try:
         service = build("drive", "v3", credentials=creds)
